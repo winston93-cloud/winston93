@@ -1,12 +1,170 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Navigation from '@/components/Navigation'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+
+// Componente de Galería Modal
+const GalleryModal = ({ 
+  isOpen, 
+  onClose, 
+  images, 
+  currentIndex, 
+  onNext, 
+  onPrev, 
+  title 
+}: {
+  isOpen: boolean
+  onClose: () => void
+  images: string[]
+  currentIndex: number
+  onNext: () => void
+  onPrev: () => void
+  title: string
+}) => {
+  if (!isOpen) return null
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
+        onClick={onClose}
+      >
+        <div className="relative max-w-6xl max-h-[95vh] w-full mx-4">
+          {/* Botón de cerrar */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 text-white text-4xl hover:text-gray-300 transition-colors"
+          >
+            ×
+          </button>
+
+          {/* Título */}
+          <div className="absolute top-4 left-4 z-10 text-white text-2xl font-bold">
+            {title}
+          </div>
+
+          {/* Imagen principal */}
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+            className="relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[currentIndex]}
+              alt={`${title} - Imagen ${currentIndex + 1}`}
+              className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
+            />
+          </motion.div>
+
+          {/* Navegación */}
+          <div className="absolute inset-0 flex items-center justify-between p-4 pointer-events-none">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onPrev()
+              }}
+              className="pointer-events-auto bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all transform hover:scale-110"
+            >
+              ‹
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onNext()
+              }}
+              className="pointer-events-auto bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all transform hover:scale-110"
+            >
+              ›
+            </button>
+          </div>
+
+          {/* Indicadores */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  // Aquí necesitarías una función para ir a una imagen específica
+                }}
+                className={`w-3 h-3 rounded-full transition-all ${
+                  index === currentIndex ? 'bg-white' : 'bg-white bg-opacity-50'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Contador */}
+          <div className="absolute bottom-4 right-4 text-white text-lg">
+            {currentIndex + 1} / {images.length}
+          </div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
 
 export default function PrimariaPage() {
   const [scrolled, setScrolled] = useState(false)
   const [windowSize, setWindowSize] = useState({ width: 1920, height: 1080 })
   const { scrollYProgress } = useScroll()
+
+  // Estados para la galería
+  const [galleryOpen, setGalleryOpen] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [currentGallery, setCurrentGallery] = useState<string | null>(null)
+
+  // Configuración de galerías
+  const galleries: Record<string, { title: string; images: string[] }> = {
+    entrepreneurs: {
+      title: "ENTREPRENEURS",
+      images: [
+        "/images/entrepreneurs/emprendedores1.JPG",
+        "/images/entrepreneurs/emprendedores2.JPG",
+        "/images/entrepreneurs/emprendedores3.JPG",
+        "/images/entrepreneurs/emprendedores4.JPG",
+        "/images/entrepreneurs/emprendedores5.JPG",
+        "/images/entrepreneurs/emprendedores6.JPG",
+        "/images/entrepreneurs/emprendedores7.JPG",
+        "/images/entrepreneurs/emprendedores8.JPG",
+        "/images/entrepreneurs/emprendedores9.JPG",
+        "/images/entrepreneurs/emprendedores10.JPG"
+      ]
+    }
+  }
+
+  // Funciones para la galería
+  const openGallery = (galleryKey: string) => {
+    setCurrentGallery(galleryKey)
+    setCurrentImageIndex(0)
+    setGalleryOpen(true)
+  }
+
+  const closeGallery = () => {
+    setGalleryOpen(false)
+    setCurrentGallery(null)
+  }
+
+  const nextImage = () => {
+    if (currentGallery) {
+      const totalImages = galleries[currentGallery].images.length
+      setCurrentImageIndex((prev) => (prev + 1) % totalImages)
+    }
+  }
+
+  const prevImage = () => {
+    if (currentGallery) {
+      const totalImages = galleries[currentGallery].images.length
+      setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages)
+    }
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -96,84 +254,39 @@ export default function PrimariaPage() {
         </motion.div>
       </section>
 
-      {/* Sección de Educación Bilingüe con avión animado */}
+
+
+      {/* Sección de Educación Bilingüe */}
       <section className="py-20 bg-white relative overflow-hidden">
-        {/* Línea trazada para el avión */}
-        <div className="absolute top-0 left-0 w-full h-full">
-          <svg className="w-full h-full absolute inset-0" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <motion.path
-              d="M10,20 Q30,10 50,30 T90,50 Q70,70 50,80 T10,90"
-              stroke="#3B82F6"
-              strokeWidth="0.5"
-              fill="none"
-              strokeDasharray="5,5"
-              initial={{ pathLength: 0 }}
-              style={{ pathLength: useTransform(scrollYProgress, [0, 0.3], [0, 1]) }}
-            />
-          </svg>
-        </div>
+       
+                 <div className="container mx-auto px-6 relative z-10">
+           <div className="flex gap-80 items-start justify-center">
+             {/* Título a la izquierda */}
+             <div className="flex-shrink-0">
+               <h2 className="text-3xl md:text-4xl font-bold text-blue-900">EDUCACIÓN</h2>
+               <h3 className="text-3xl md:text-4xl font-bold text-blue-600">BILINGÜE</h3>
+               <div className="ml-4">
+                 <p className="text-lg text-blue-700 font-medium">QUE FORMA</p>
+                 <p className="text-lg text-blue-700 font-medium">CON PROPÓSITO</p>
+               </div>
+             </div>
 
-        {/* Avión que sigue la línea */}
-        <motion.div
-          className="absolute top-20 left-10 w-8 h-8"
-          style={{
-            x: useTransform(scrollYProgress, [0, 0.3], [0, 300]),
-            y: useTransform(scrollYProgress, [0, 0.3], [0, 200]),
-            rotate: useTransform(scrollYProgress, [0, 0.3], [0, 45])
-          }}
-        >
-          <img
-            src="/images/facilities/avion.png"
-            alt="Avión decorativo"
-            className="w-full h-full object-contain"
-          />
-        </motion.div>
-        
-        {/* Elementos decorativos de fondo */}
-        <div className="absolute top-0 left-0 w-64 h-64 border-4 border-dashed border-gray-300 rounded-full opacity-30"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 border-4 border-dashed border-gray-300 rounded-full opacity-20"></div>
-        
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Contenido de texto */}
-            <div>
-              <div className="flex items-center mb-8">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mr-6">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-blue-900">EDUCACIÓN</h2>
-                  <h3 className="text-3xl md:text-4xl font-bold text-blue-600">BILINGÜE</h3>
-                  <p className="text-lg text-blue-700 font-medium">QUE FORMA CON PROPÓSITO</p>
-                </div>
-              </div>
-
-              <div className="space-y-4 text-gray-600 leading-relaxed">
-                <p>
-                  En nuestra primaria, nuestros alumnos aprenden un modelo bilingüe con inmersión total en inglés, logrando comprender y expresarse con fluidez.
-                </p>
-                <p>
-                  La otra mitad se imparte en español cumpliendo con el programa oficial de la SEP.
-                </p>
-                <p>
-                  Desde esta etapa, promovemos el pensamiento emprendedor, la autonomía, fortaleciendo su seguridad, creatividad y habilidades para enfrentar con éxito los retos del mundo actual.
-                </p>
-              </div>
-            </div>
-
-            {/* Botón de acción */}
-            <div className="flex justify-center lg:justify-end">
-              <button 
-                className="bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-4 px-12 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-                style={{ backgroundColor: '#dafb00' }}
-              >
-                Conocer Más
-              </button>
-            </div>
-          </div>
-        </div>
+             {/* Texto descriptivo a la derecha */}
+             <div className="w-96">
+               <div className="space-y-2 text-gray-600 leading-relaxed text-justify">
+                 <p>
+                   En nuestra primaria, nuestros alumnos aprenden un modelo bilingüe con inmersión total en inglés, logrando comprender y expresarse con fluidez.
+                   La otra mitad se imparte en español cumpliendo con el programa oficial de la SEP.
+                 </p>                
+                 <div className="ml-8">
+                   <p>
+                     Desde esta etapa, promovemos el pensamiento emprendedor, la autonomía, fortaleciendo su seguridad, creatividad y habilidades para enfrentar con éxito los retos del mundo actual.
+                   </p>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
       </section>
 
       {/* Sección de Materias Extracurriculares */}
@@ -189,77 +302,80 @@ export default function PrimariaPage() {
           </div>
 
           {/* Grid de materias extracurriculares */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 max-w-7xl mx-auto justify-items-center">
             {/* Mindfulness */}
-            <div className="relative group">
+            <div className="relative group overflow-hidden rounded-2xl">
               <img
-                src="/images/activities/mindfulness.jpg"
+                src="/images/extracurriculares/mindfulness.jpg"
                 alt="Mindfulness"
-                className="w-full h-64 object-cover rounded-2xl"
+                className="w-auto h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-blue-600 bg-opacity-80 rounded-2xl flex items-end p-6">
-                <h4 className="text-white text-2xl font-bold">MINDFULNESS</h4>
+              <div className="absolute bottom-0 left-0 right-0 bg-blue-900 bg-opacity-60 p-3 transition-all duration-700 ease-in-out group-hover:bottom-0 group-hover:top-0 group-hover:bg-opacity-90 group-hover:flex group-hover:items-center group-hover:justify-center">
+                <h4 className="text-white text-xl font-bold transition-all duration-700 group-hover:text-2xl">MINDFULNESS</h4>
               </div>
             </div>
 
             {/* Robótica */}
-            <div className="relative group">
+            <div className="relative group overflow-hidden rounded-2xl">
               <img
-                src="/images/activities/robotica.jpg"
+                src="/images/extracurriculares/robotica.jpg"
                 alt="Robótica"
-                className="w-full h-64 object-cover rounded-2xl"
+                className="w-auto h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-yellow-400 bg-opacity-80 rounded-2xl flex items-end p-6">
-                <h4 className="text-black text-2xl font-bold">ROBÓTICA</h4>
+              <div className="absolute bottom-0 left-0 right-0 bg-opacity-60 p-3 transition-all duration-700 ease-in-out group-hover:bottom-0 group-hover:top-0 group-hover:bg-opacity-90 group-hover:flex group-hover:items-center group-hover:justify-center" style={{ backgroundColor: '#dbfb04' }}>
+                <h4 className="text-black text-xl font-bold transition-all duration-700 group-hover:text-2xl">ROBÓTICA</h4>
               </div>
             </div>
 
             {/* Artes */}
-            <div className="relative group">
+            <div className="relative group overflow-hidden rounded-2xl">
               <img
-                src="/images/activities/artes.jpg"
+                src="/images/extracurriculares/artes.jpg"
                 alt="Artes"
-                className="w-full h-64 object-cover rounded-2xl"
+                className="w-auto h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-blue-600 bg-opacity-80 rounded-2xl flex items-end p-6">
-                <h4 className="text-white text-2xl font-bold">ARTES</h4>
+              <div className="absolute bottom-0 left-0 right-0 bg-blue-900 bg-opacity-60 p-3 transition-all duration-700 ease-in-out group-hover:bottom-0 group-hover:top-0 group-hover:bg-opacity-90 group-hover:flex group-hover:items-center group-hover:justify-center">
+                <h4 className="text-white text-xl font-bold transition-all duration-700 group-hover:text-2xl">ARTES</h4>
               </div>
             </div>
           </div>
 
           {/* Segunda fila */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto justify-items-center">
             {/* Tecnología */}
-            <div className="relative group">
+            <div className="relative group overflow-hidden rounded-2xl">
               <img
-                src="/images/activities/tecnologia.jpg"
+                src="/images/extracurriculares/tecnologia.jpg"
                 alt="Tecnología"
-                className="w-full h-64 object-cover rounded-2xl"
+                className="w-auto h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-yellow-400 bg-opacity-80 rounded-2xl flex items-end p-6">
-                <h4 className="text-black text-2xl font-bold">TECNOLOGÍA</h4>
+              <div className="absolute bottom-0 left-0 right-0 bg-opacity-60 p-3 transition-all duration-700 ease-in-out group-hover:bottom-0 group-hover:top-0 group-hover:bg-opacity-90 group-hover:flex group-hover:items-center group-hover:justify-center" style={{ backgroundColor: '#dbfb04' }}>
+                <h4 className="text-black text-xl font-bold transition-all duration-700 group-hover:text-2xl">TECNOLOGÍA</h4>
               </div>
             </div>
 
-            {/* Actividades grupales */}
-            <div className="relative group">
+            {/* Entrepreneurs */}
+            <div className="relative group overflow-hidden rounded-2xl cursor-pointer" onClick={() => openGallery('entrepreneurs')}>
               <img
-                src="/images/activities/grupo.jpg"
-                alt="Actividades Grupales"
-                className="w-full h-64 object-cover rounded-2xl"
+                src="/images/extracurriculares/entrepreneurs.jpg"
+                alt="Entrepreneurs"
+                className="w-auto h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105"
               />
+              <div className="absolute bottom-0 left-0 right-0 bg-blue-900 bg-opacity-60 p-3 transition-all duration-700 ease-in-out group-hover:bottom-0 group-hover:top-0 group-hover:bg-opacity-90 group-hover:flex group-hover:items-center group-hover:justify-center">
+                <h4 className="text-white text-xl font-bold transition-all duration-700 group-hover:text-2xl">ENTREPRENEURS</h4>
+              </div>
             </div>
 
             {/* Educación en la Fe */}
-            <div className="relative group">
+            <div className="relative group overflow-hidden rounded-2xl">
               <img
-                src="/images/activities/fe.jpg"
+                src="/images/extracurriculares/fe.jpg"
                 alt="Educación en la Fe"
-                className="w-full h-64 object-cover rounded-2xl"
+                className="w-auto h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-blue-600 bg-opacity-80 rounded-2xl flex items-end p-6">
-                <h4 className="text-white text-xl font-bold">EDUCACIÓN EN LA FE</h4>
-                <span className="text-white text-sm ml-2">(OPCIONAL)</span>
+              <div className="absolute bottom-0 left-0 right-0 bg-opacity-60 p-3 transition-all duration-700 ease-in-out group-hover:bottom-0 group-hover:top-0 group-hover:bg-opacity-90 group-hover:flex group-hover:items-center group-hover:justify-center" style={{ backgroundColor: '#dbfb04' }}>
+                <h4 className="text-black text-lg font-bold transition-all duration-700 group-hover:text-xl">EDUCACIÓN EN LA FE</h4>
+                <span className="text-black text-xs ml-2 transition-all duration-700 group-hover:text-sm">(OPCIONAL)</span>
               </div>
             </div>
           </div>
@@ -352,6 +468,19 @@ export default function PrimariaPage() {
           </div>
         </div>
       </footer>
+
+      {/* Modal de Galería */}
+      {galleryOpen && currentGallery && (
+        <GalleryModal
+          isOpen={galleryOpen}
+          onClose={closeGallery}
+          images={galleries[currentGallery].images}
+          currentIndex={currentImageIndex}
+          onNext={nextImage}
+          onPrev={prevImage}
+          title={galleries[currentGallery].title}
+        />
+      )}
     </>
   )
 } 
