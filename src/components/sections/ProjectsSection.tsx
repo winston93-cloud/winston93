@@ -85,7 +85,7 @@ export default function SliderSection() {
           </div>
         ))}
         {/* Overlay oscuro para legibilidad */}
-        <div className="absolute inset-0 bg-black/30 z-20"></div>
+        <div className="absolute inset-0 z-20 bg-black/10 md:bg-black/15 lg:bg-black/20"></div>
       </div>
 
       {/* Contenido superpuesto */}

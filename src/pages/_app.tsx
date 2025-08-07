@@ -3,9 +3,12 @@ import type { AppProps } from 'next/app'
 import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import LoadingScreen from '@/components/LoadingScreen'
+import Layout from '@/components/Layout'
+import { useRouter } from 'next/router'
 
 export default function App({ Component, pageProps }: AppProps) {
   const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     // Simular tiempo de carga
@@ -22,7 +25,11 @@ export default function App({ Component, pageProps }: AppProps) {
         {isLoading && <LoadingScreen key="loading" />}
       </AnimatePresence>
       
-      {!isLoading && <Component {...pageProps} />}
+      {!isLoading && (
+        <Layout showFooter={router.pathname !== '/'}>
+          <Component {...pageProps} />
+        </Layout>
+      )}
     </>
   )
 } 

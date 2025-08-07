@@ -9,7 +9,7 @@ const LoadingScreen = () => {
     >
       {/* Efecto sutil de fondo */}
       <div className="absolute inset-0">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(25)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-white rounded-full opacity-10"
@@ -23,6 +23,116 @@ const LoadingScreen = () => {
             }}
             transition={{
               duration: 4 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+
+        {/* Partículas adicionales distribuidas por toda la pantalla */}
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={`distributed-${i}`}
+            className="absolute w-0.5 h-0.5 bg-blue-300 rounded-full opacity-8"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -15, 0],
+              x: [0, Math.random() * 10 - 5, 0],
+              opacity: [0.08, 0.25, 0.08],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 3,
+              repeat: Infinity,
+              delay: Math.random() * 4,
+            }}
+          />
+        ))}
+
+        {/* Partículas doradas esparcidas */}
+        {[...Array(18)].map((_, i) => (
+          <motion.div
+            key={`golden-${i}`}
+            className="absolute w-0.75 h-0.75 bg-yellow-300 rounded-full opacity-12"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -25, 0],
+              opacity: [0.12, 0.35, 0.12],
+              scale: [1, 1.3, 1],
+            }}
+            transition={{
+              duration: 5 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          />
+        ))}
+
+        {/* Partículas muy pequeñas para textura */}
+        {[...Array(30)].map((_, i) => (
+          <motion.div
+            key={`tiny-${i}`}
+            className="absolute w-0.25 h-0.25 bg-white rounded-full opacity-6"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -8, 0],
+              opacity: [0.06, 0.18, 0.06],
+            }}
+            transition={{
+              duration: 2 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Partículas adicionales en la parte inferior */}
+      <div className="absolute bottom-0 left-0 right-0 h-32">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={`bottom-${i}`}
+            className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-20"
+            style={{
+              left: `${Math.random() * 100}%`,
+              bottom: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -15, 0],
+              opacity: [0.2, 0.6, 0.2],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          />
+        ))}
+        
+        {/* Partículas más pequeñas en la parte inferior */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={`small-bottom-${i}`}
+            className="absolute w-0.5 h-0.5 bg-white rounded-full opacity-15"
+            style={{
+              left: `${Math.random() * 100}%`,
+              bottom: `${Math.random() * 60}%`,
+            }}
+            animate={{
+              y: [0, -10, 0],
+              opacity: [0.15, 0.4, 0.15],
+            }}
+            transition={{
+              duration: 2.5 + Math.random() * 1.5,
               repeat: Infinity,
               delay: Math.random() * 2,
             }}

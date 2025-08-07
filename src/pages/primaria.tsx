@@ -419,55 +419,7 @@ export default function PrimariaPage() {
         </div>
       </section>
 
-      {/* Footer como en la imagen */}
-      <footer className="bg-blue-600 text-white py-8 relative overflow-hidden">
-        {/* Forma curva decorativa */}
-        <div className="absolute top-0 left-0 w-96 h-32 bg-blue-700 rounded-br-full"></div>
-        
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            {/* Logo y información */}
-            <div>
-              <img 
-                src="/images/logos/logo_winston.png" 
-                alt="Instituto Winston Churchill" 
-                className="h-12 w-auto mb-4"
-              />
-              <p className="text-xl font-bold mb-2">WORKING FOR A BRIGHTER FUTURES</p>
-              <p className="text-sm mb-4">#saywinston</p>
-              
-              <div className="space-y-1 text-sm">
-                <p>CALL: 3-4309</p>
-                <p>COL. JARDÍN 20 DE NOVIEMBRE,</p>
-                <p>CD. MADERO TAMPS.</p>
-              </div>
-            </div>
-
-            {/* Redes sociales y aviso */}
-            <div className="text-right">
-              <div className="flex justify-end space-x-4 mb-6">
-                <a href="#" className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors">
-                  <span className="text-white">f</span>
-                </a>
-                <a href="#" className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors">
-                  <span className="text-white">@</span>
-                </a>
-                <a href="#" className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors">
-                  <span className="text-white">in</span>
-                </a>
-                <a href="#" className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors">
-                  <span className="text-white">ig</span>
-                </a>
-                <a href="#" className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors">
-                  <span className="text-white">yt</span>
-                </a>
-              </div>
-              
-              <p className="text-lg font-bold">AVISO DE PRIVACIDAD</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer global se renderiza desde Layout */}
 
       {/* Modal de Galería */}
       {galleryOpen && currentGallery && (
