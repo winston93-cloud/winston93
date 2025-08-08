@@ -133,7 +133,7 @@ export default function FullPageScroll({ children, onSectionChange }: FullPageSc
         window.removeEventListener('touchend', handleTouchEnd)
       }
     }
-  }, [currentSection, isScrolling, children.length, windowHeight])
+  }, [currentSection, isScrolling, children.length, windowHeight, scrollToSection])
 
   // No renderizar hasta que tengamos la altura de la ventana
   if (windowHeight === 0) {

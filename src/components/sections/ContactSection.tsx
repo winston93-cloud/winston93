@@ -114,7 +114,7 @@ export default function FooterSection() {
           <AnimatedElement animation="fadeIn" delay={1500}>
             <div className="text-right">
               <div className="text-yellow-400 font-semibold text-lg mb-2">
-                "Working for Brighter Futures"
+                &ldquo;Working for Brighter Futures&rdquo;
               </div>
               <div className="text-blue-100 text-sm">
                 Educación bilingüe • Valores • Excelencia académica
